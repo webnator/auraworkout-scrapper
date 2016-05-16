@@ -24,9 +24,9 @@ var setOptions = function () {
 var init = function () {
   return new Promise((resolve, reject) => {
     // Create a server with a host and port
-    server = new Hapi.Server(~~process.env.PORT || 9000, '0.0.0.0');
+    server = new Hapi.Server();
     server.connection({
-      //port: config.port,
+      port: config.port,
       routes: {
         cors: true
       }
