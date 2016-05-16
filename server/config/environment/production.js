@@ -7,7 +7,7 @@ module.exports = {
   port            : process.env.PORT || 9000,
 
   mysqlSettings: {
-    host     : 'localhost',
+    host     : '107.180.21.19',
     port     : '3306',
     user     : 'toptalAdmin',
     password : 'QbX!4{82KOx*',
