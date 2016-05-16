@@ -14,4 +14,16 @@ module.exports = function(server) {
     handler: dataController.fetchData
   });
 
+  server.route({
+    method: 'GET',
+    path: '/customers',
+    config: {
+      auth: false,
+      tags: ['api', 'customers'],
+      description: 'Default customers get request'
+    },
+    handler: dataController.getCustomers
+  });
+  
+
 };

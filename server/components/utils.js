@@ -35,6 +35,7 @@ w.add(winston.transports.Console, {
 
 exports.DBConnection        = DBConnection;
 exports.truncateTable       = truncateTable;
+exports.getAllFrom          = getAllFrom;
 exports.insertInto          = insertInto;
 exports.generateUuid        = generateUuid;
 exports.generateToken       = generateToken;
@@ -48,6 +49,25 @@ exports.log                 = log;
 
 function DBConnection() {
   return GlobalModule.getConfigValue('db').pool;
+}
+
+function getAllFrom(table) {
+  var deferred = Q.defer();
+  var conn = new DBConnection();
+  conn.getConnection(function(err, connection) {
+    if(err) {
+      deferred.reject(err);
+    }
+    connection.query('SELECT * FROM ' + table + ' LIMIT 100;', function (err, res) {
+      if(err) {
+        deferred.reject(err);
+      }
+      deferred.resolve(res);
+    });
+    // And done with the connection.
+    connection.release();
+  });
+  return deferred.promise;
 }
 
 function truncateTable(table) {

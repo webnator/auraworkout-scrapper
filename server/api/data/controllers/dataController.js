@@ -5,6 +5,7 @@ var dataResponses = require('./../responses/dataResponses');
 var Errors        = require('../../../components/errors');
 var Utils         = require('../../../components/utils');
 var _dataUtils    = require('./../controllers/dataUtils');
+var _customerUtils    = require('./../controllers/customerUtils');
 var log           = Utils.log;
 
 exports.fetchData = function(request, reply) {
@@ -38,6 +39,26 @@ exports.fetchData = function(request, reply) {
     .fail(function(err){
       response = Errors.createGeneralError(err);
       log('error', data.logData, 'getData KO - Error: ', response);
+      return reply(response).code(err.statusCode);
+    });
+};
+
+exports.getCustomers = function(request, reply) {
+  var data = {
+    logData : Utils.logData(request)
+  };
+  var response;
+  log('info', data.logData, 'getCustomers Accessing');
+
+  _customerUtils.getCustomers(data)
+    .then(function(){
+      response = Utils.createResponseData(dataResponses.customers_listed_ok, data.customers);
+      log('info', data.logData, 'getCustomers OK response', response);
+      return reply(response).code(response.result.statusCode);
+    })
+    .fail(function(err){
+      response = Errors.createGeneralError(err);
+      log('error', data.logData, 'getCustomers KO - Error: ', response);
       return reply(response).code(err.statusCode);
     });
 };

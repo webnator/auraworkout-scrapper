@@ -20,10 +20,16 @@ module.exports = {
     code: responses.auraworkout406.code,
     message: 'Fetch data petition refused'
   },
-  
+
   login_error: {
     statusCode: 401,
     code: responses.auraworkout401.code,
     message: 'Error login to Zing platform'
+  },
+
+  customers_listed_ok: {
+    statusCode: 200,
+    code: responses.auraworkout200.code,
+    message: 'Customers retrieved correctly'
   }
 };
