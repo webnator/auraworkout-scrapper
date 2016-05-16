@@ -1,0 +1,11 @@
+{
+  "generator-hapi-rest": {
+    "appRAML": false,
+    "appTesting": false,
+    "appHealth": false,
+    "appAuth": false,
+    "appName": "aura-workout",
+    "appPrefix": "AURA",
+    "appRepo": ""
+  }
+}
