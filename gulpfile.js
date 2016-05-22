@@ -15,7 +15,7 @@ gulp.task('start', ['lint' ], function () {
   nodemon({
     script: 'server',
     ext: 'js',
-    env: { 'AURA_NODE_ENV': 'local' },
+    env: { 'AURA_NODE_ENV': 'production' },
     tasks: ['lint']
   })
   .on('restart', function () {

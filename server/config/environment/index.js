@@ -2,7 +2,7 @@
 
 var _ = require('lodash');
 
-process.env.AURA_NODE_ENV = process.env.AURA_NODE_ENV || 'local';
+process.env.AURA_NODE_ENV = process.env.AURA_NODE_ENV || 'production';
 // All configurations will extend these options
 // ============================================
 var all = {

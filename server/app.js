@@ -2,8 +2,6 @@
  * Main application file
  */
 'use strict';
-// Set default node environment to development
-process.env.AURA_NODE_ENV = process.env.AURA_NODE_ENV || 'local';
 
 var Hapi          = require('hapi');
 var config        = require('./config/environment');

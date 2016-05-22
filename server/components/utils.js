@@ -75,14 +75,19 @@ function getAllFrom(table) {
 function truncateTable(table) {
   var deferred = Q.defer();
   var conn = new DBConnection();
+  log('info', '', 'Utils truncateTable accesing');
   conn.getConnection(function(err, connection) {
     if(err) {
+      log('error', '', 'Utils truncateTable connections error', err);
       deferred.reject(err);
     }
+    log('info', '', 'Utils truncateTable connected');
     connection.query('TRUNCATE TABLE ' + table + ';', function (err, res) {
       if(err) {
+        log('error', '', 'Utils truncateTable truncate error', err);
         deferred.reject(err);
       }
+      log('info', '', 'Utils truncateTable truncated');
       deferred.resolve(res);
     });
     // And done with the connection.
@@ -131,10 +136,13 @@ function insertInto(jsonObject, table) {
 function insertMultiple(jsonObject, table) {
   var deferred = Q.defer();
   var conn = new DBConnection();
+  log('info', '', 'Utils insertMultiple accesing');
   conn.getConnection(function(err, connection) {
     if(err) {
+      log('error', '', 'Utils insertMultiple connections error', err);
       deferred.reject(err);
     }
+    log('info', '', 'Utils insertMultiple connected');
 
     var total = jsonObject.length;
     var current = 0;
