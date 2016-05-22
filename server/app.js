@@ -31,7 +31,7 @@ var init = function () {
         cors: true
       }
     });
-  
+
     // Register the server and start the application
     server.register(
       [

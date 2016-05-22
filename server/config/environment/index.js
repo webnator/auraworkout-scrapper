@@ -2,10 +2,11 @@
 
 var _ = require('lodash');
 
+process.env.AURA_NODE_ENV = process.env.AURA_NODE_ENV || 'local';
 // All configurations will extend these options
 // ============================================
 var all = {
-  env: process.env.AURA_NODE_ENV,
+  env: process.env.AURA_NODE_ENV ,
   host: process.env.AURA_IP || 'localhost',
   appName: 'aura-workout',
   routes: {

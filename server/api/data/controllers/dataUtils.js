@@ -291,64 +291,57 @@ exports.storeCustomers = function(data){
 
   log('info', data.logData, 'storeCustomers accesing', { totalCustomers: data.output.customers.length });
 
-  for (var i = 0; i < data.output.customers.length; i++) {
-    var customer = data.output.customers[i];
-    Utils.insertInto(customer, 'Customer').then(function () {
+  Utils.truncateTable('Customer').then(function () {
+    Utils.insertMultiple(data.output.customers, 'Customer', data).then(function () {
+      deferred.resolve(data);
     }, function (err) {
       console.log('ERROR', err);
     });
-  }
-  deferred.resolve(data);
+  });
 
   return deferred.promise;
 };
 
 exports.storeSales = function(data){
   var deferred = Q.defer();
-
   log('info', data.logData, 'storeSales accesing', { totalSales: data.output.sales.length });
-  for (var i = 0; i < data.output.sales.length; i++) {
-    var sale = data.output.sales[i];
-    Utils.insertInto(sale, 'Sale').then(function () {
+
+  Utils.truncateTable('Sale').then(function () {
+    Utils.insertMultiple(data.output.sales, 'Sale', data).then(function () {
+      deferred.resolve(data);
     }, function (err) {
       console.log('ERROR', err);
     });
-  }
-  deferred.resolve(data);
+  });
 
   return deferred.promise;
 };
 
 exports.storeAttendance = function(data){
   var deferred = Q.defer();
-
   log('info', data.logData, 'storeAttendance accesing', { totalAttendances: data.output.attendance.length });
-  for (var i = 0; i < data.output.attendance.length; i++) {
-    var attendance = data.output.attendance[i];
-    Utils.insertInto(attendance, 'Attendance').then(function () {
+
+  Utils.truncateTable('Attendance').then(function () {
+    Utils.insertMultiple(data.output.attendance, 'Attendance', data).then(function () {
+      deferred.resolve(data);
     }, function (err) {
       console.log('ERROR', err);
     });
-  }
-  deferred.resolve(data);
+  });
 
   return deferred.promise;
 };
 
 exports.storeSeries = function(data){
   var deferred = Q.defer();
-
   log('info', data.logData, 'storeSeries accesing', { totalSeries: data.output.series.length });
-  
+
   Utils.truncateTable('Serie').then(function () {
-    for (var i = 0; i < data.output.series.length; i++) {
-      var series = data.output.series[i];
-      Utils.insertInto(series, 'Serie').then(function () {
-      }, function (err) {
-        console.log('ERROR', err);
-      });
-    }
-    deferred.resolve(data);
+    Utils.insertMultiple(data.output.series, 'Serie', data).then(function () {
+      deferred.resolve(data);
+    }, function (err) {
+      console.log('ERROR', err);
+    });
   });
 
   return deferred.promise;

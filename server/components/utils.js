@@ -37,6 +37,8 @@ exports.DBConnection        = DBConnection;
 exports.truncateTable       = truncateTable;
 exports.getAllFrom          = getAllFrom;
 exports.insertInto          = insertInto;
+exports.insertBulk          = insertBulk;
+exports.insertMultiple      = insertMultiple;
 exports.generateUuid        = generateUuid;
 exports.generateToken       = generateToken;
 exports.encryptText         = encryptText;
@@ -119,6 +121,99 @@ function insertInto(jsonObject, table) {
         deferred.reject(err);
       }
       deferred.resolve(res);
+    });
+    // And done with the connection.
+    connection.release();
+  });
+  return deferred.promise;
+}
+
+function insertMultiple(jsonObject, table) {
+  var deferred = Q.defer();
+  var conn = new DBConnection();
+  conn.getConnection(function(err, connection) {
+    if(err) {
+      deferred.reject(err);
+    }
+
+    var total = jsonObject.length;
+    var current = 0;
+    var i, y;
+    for (i = 0; i < jsonObject.length; i++) {
+
+      var insertSql = 'INSERT INTO `' + table + '` (';
+      var fields = '';
+      var values = '';
+      var update = '';
+      for (y = 0; y < Object.keys(jsonObject[i]).length; y++) {
+        var key = Object.keys(jsonObject[i])[y].replace(' ', '_');
+        var val = conn.escape(jsonObject[i][Object.keys(jsonObject[i])[y]]);
+        fields += '`' + key + '`';
+        values += val;
+        update += '`' + key + '`=' + val;
+        if (y !== Object.keys(jsonObject[i]).length - 1) {
+          fields += ', ';
+          values += ', ';
+          update += ', ';
+        }
+      }
+      insertSql += fields + ') VALUES (' + values + ') ON DUPLICATE KEY UPDATE ' + update + ';';
+      connection.query(insertSql, function (err, res) {
+        current++;
+        if (err) {
+          console.log('Error Processing record for ' + table + ':', current, 'of', total, 'ERROR', err);
+        } else {
+          console.log('Processing record for ' + table + ':', current, 'of', total);
+        }
+        isDone(total, current, deferred);
+      });
+    }
+  });
+
+  function isDone(total, current, deferred, data) {
+    if (current >= total) {
+      console.log('IS DONE resolving');
+      deferred.resolve();
+    }
+  }
+
+  return deferred.promise;
+}
+
+
+function insertBulk(jsonObject, table) {
+  var deferred = Q.defer();
+  var conn = new DBConnection();
+  conn.getConnection(function(err, connection) {
+    if(err) {
+      deferred.reject(err);
+    }
+    var insertSql = 'INSERT INTO `' + table + '` (';
+    var fields = '';
+    var i, y;
+    for (i = 0; i < Object.keys(jsonObject[0]).length; i++) {
+      var key = Object.keys(jsonObject[0])[i].replace(' ', '_');
+      fields += '`' + key + '`';
+      if (i !== Object.keys(jsonObject[0]).length - 1) {
+        fields += ', ';
+      }
+    }
+    var values = [];
+    for (i = 0; i < jsonObject.length; i++) {
+      var rowVal = [];
+      for (y = 0; y < Object.keys(jsonObject[i]).length; y++) {
+        var colKey = Object.keys(jsonObject[i])[y];
+        rowVal.push(conn.escape(jsonObject[i][colKey]));
+      }
+      values.push(rowVal);
+    }
+    insertSql += fields + ') VALUES ? ';
+    connection.query(insertSql, [values], function (err, res) {
+      if(err) {
+        return deferred.reject(err);
+      }
+
+      return deferred.resolve(res);
     });
     // And done with the connection.
     connection.release();
