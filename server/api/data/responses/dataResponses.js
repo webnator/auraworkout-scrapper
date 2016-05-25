@@ -30,7 +30,7 @@ module.exports = {
   customers_listed_ok: {
     statusCode: 200,
     code: responses.auraworkout200.code,
-    message: 'Customers retrieved correctly'
+    message: 'Data retrieved correctly'
   },
 
   data_type_not_valid: {
