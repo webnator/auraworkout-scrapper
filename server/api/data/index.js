@@ -16,13 +16,13 @@ module.exports = function(server) {
 
   server.route({
     method: 'GET',
-    path: '/customers',
+    path: '/{dataTable}',
     config: {
       auth: false,
       tags: ['api', 'customers'],
       description: 'Default customers get request'
     },
-    handler: dataController.getCustomers
+    handler: dataController.getData
   });
   
 

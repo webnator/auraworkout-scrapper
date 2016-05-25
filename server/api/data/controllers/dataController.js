@@ -43,16 +43,23 @@ exports.fetchData = function(request, reply) {
     });
 };
 
-exports.getCustomers = function(request, reply) {
+exports.getData = function(request, reply) {
   var data = {
-    logData : Utils.logData(request)
+    logData : Utils.logData(request),
+    query: request.query,
+    params: request.params
   };
   var response;
   log('info', data.logData, 'getCustomers Accessing');
 
-  _customerUtils.getCustomers(data)
+  _customerUtils.getData(data)
     .then(function(){
       response = Utils.createResponseData(dataResponses.customers_listed_ok, data.customers);
+      response.result.page = data.query.page;
+      response.result.limit = data.query.limit;
+      response.result.total = data.total;
+      response.result.totalPages = data.totalPages;
+
       log('info', data.logData, 'getCustomers OK response', response);
       return reply(response).code(response.result.statusCode);
     })
@@ -62,3 +69,4 @@ exports.getCustomers = function(request, reply) {
       return reply(response).code(err.statusCode);
     });
 };
+

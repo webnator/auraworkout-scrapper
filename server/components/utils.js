@@ -39,6 +39,7 @@ exports.getAllFrom          = getAllFrom;
 exports.insertInto          = insertInto;
 exports.insertBulk          = insertBulk;
 exports.insertMultiple      = insertMultiple;
+exports.countAllFrom        = countAllFrom;
 exports.generateUuid        = generateUuid;
 exports.generateToken       = generateToken;
 exports.encryptText         = encryptText;
@@ -53,14 +54,62 @@ function DBConnection() {
   return GlobalModule.getConfigValue('db').pool;
 }
 
-function getAllFrom(table) {
+function getAllFrom(table, sqlQuery) {
   var deferred = Q.defer();
   var conn = new DBConnection();
   conn.getConnection(function(err, connection) {
     if(err) {
       deferred.reject(err);
     }
-    connection.query('SELECT * FROM ' + table + ' LIMIT 100;', function (err, res) {
+
+    var page = (sqlQuery.page - 1) * sqlQuery.limit;
+
+    var query = 'SELECT * FROM ' + table;
+    if (sqlQuery.search && sqlQuery.searchParam) {
+      query += ' WHERE ' + sqlQuery.searchParam + ' LIKE \'%' + sqlQuery.search + '%\'';
+    }
+    query += ' ORDER BY ' + sqlQuery.orderBy;
+    query += ' LIMIT ' + page + ',' + sqlQuery.limit;
+    
+    connection.query(query, function (err, res) {
+      if(err) {
+        deferred.reject(err);
+      }
+      var response = {
+        data: res
+      };
+      var countQuery = 'SELECT COUNT(*) as total FROM ' + table;
+      if (sqlQuery.search && sqlQuery.searchParam) {
+        countQuery += ' WHERE ' + sqlQuery.searchParam + ' LIKE \'%' + sqlQuery.search + '%\'';
+      }
+
+      connection.query(countQuery, function (err, res) {
+        if (err) {
+          deferred.reject(err);
+        }
+        response.count = res[0].total;
+        
+        deferred.resolve(response);
+      });
+      
+      
+      
+    });
+    // And done with the connection.
+    connection.release();
+  });
+  return deferred.promise;
+}
+
+function countAllFrom(table) {
+  var deferred = Q.defer();
+  var conn = new DBConnection();
+  conn.getConnection(function(err, connection) {
+    if(err) {
+      deferred.reject(err);
+    }
+
+    connection.query('SELECT COUNT(*) as total FROM ' + table, function (err, res) {
       if(err) {
         deferred.reject(err);
       }
@@ -187,7 +236,6 @@ function insertMultiple(jsonObject, table) {
 
   return deferred.promise;
 }
-
 
 function insertBulk(jsonObject, table) {
   var deferred = Q.defer();

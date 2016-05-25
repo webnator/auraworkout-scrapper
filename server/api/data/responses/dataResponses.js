@@ -31,5 +31,11 @@ module.exports = {
     statusCode: 200,
     code: responses.auraworkout200.code,
     message: 'Customers retrieved correctly'
+  },
+
+  data_type_not_valid: {
+    statusCode: 403,
+    code: responses.auraworkout403.code,
+    message: 'The required data set is not valid'
   }
 };
