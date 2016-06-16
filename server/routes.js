@@ -10,7 +10,8 @@ exports.register = function(server, options, next) {
   
 
   require('./api/data')(server);
-  /* routesinject */
+  require('./api/register')(server); 
+ /* routesinject */
 
   next();
 };

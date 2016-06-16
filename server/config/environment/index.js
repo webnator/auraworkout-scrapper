@@ -14,11 +14,14 @@ var all = {
   },
   salt: 'aura-workouts4ltv4lu3',
   zingCredentials: {
-    username: 'Williams',
-    password: 'greensky70'
+    username: 'wtop',
+    password: 'aura90048'
   },
-  zingUrl: 'http://reserve.auraworkout.com/admin/index.cfm'
+  zingUrl: 'http://reserve.auraworkout.com/admin/index.cfm',
+  zingRegisterUrl: 'http://reserve.auraworkout.com/reserve/index.cfm'
 };
+
+
 
 console.log('Runing in ', process.env.AURA_NODE_ENV, 'mode');
 

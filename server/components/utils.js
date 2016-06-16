@@ -351,9 +351,9 @@ function validateSchema(data){
   Joi.validate(data.payload, data.schema, function(err) {
     if (err) {
       var error = {
-        message : err.details[0].message,
-        code    : 400,
-        statusCode    : 400
+        message: err.details[0].message,
+        code: 400,
+        statusCode: 400
       };
       deferred.reject(error);
     } else {

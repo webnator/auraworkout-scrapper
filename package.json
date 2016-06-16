@@ -4,6 +4,7 @@
   "description": "Generic backend Hapi App generated with the hapi-rest generator",
   "main": "server",
   "dependencies": {
+    "cheerio": "^0.20.0",
     "csvtojson": "^0.5.10",
     "hapi": "11.x.x",
     "hapi-auth-jwt2": "5.2.1",
