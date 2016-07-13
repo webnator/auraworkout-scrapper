@@ -27,7 +27,7 @@ exports.registerUser = function(request, reply) {
     .then(_registerUtils.checkoutBilling)
     .then(_registerUtils.processPayment)
     .then(function(data){
-      response = Utils.createResponseData(registerResponses.all_ok);
+      response = Utils.createResponseData(registerResponses.registration_ok);
       log('info', data.logData, 'getRegister OK response', response);
       return reply(response).code(response.result.statusCode);
     })

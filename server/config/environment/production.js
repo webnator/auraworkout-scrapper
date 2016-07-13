@@ -12,5 +12,11 @@ module.exports = {
     user     : 'toptalAdmin',
     password : 'QbX!4{82KOx*',
     database : 'zing_reports'
-  }
+  },
+
+  mongoSettings: {
+  port: '',
+    username: 'root',
+    password: 'AC1kuG1RVoWH'
+}
 };

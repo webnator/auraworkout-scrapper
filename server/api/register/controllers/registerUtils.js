@@ -27,7 +27,24 @@ function registerUser(data){
     log('info', data.logData, 'registerUser (Request) OK');
 
     if (response.reqData.body !== '') {
-      return deferred.reject(registerResponses.register_error);
+
+      var page = response.reqData.body;
+      var $ = cheerio.load(page);
+      var div = $('.error').html();
+      var errorField = $(div).find('input').attr('name');
+      var errorMessage = $(div).find('.help-inline').html();
+
+      var error = registerResponses.register_error;
+      if (errorField || errorMessage) {
+        error = registerResponses.error_in_params;
+        if (errorMessage) {
+          error.message = errorMessage;
+        }
+        if (errorField) {
+          error.field = errorField;
+        }
+      }
+      return deferred.reject(error);
     } else {
       deferred.resolve(data);
     }

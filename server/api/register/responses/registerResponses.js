@@ -9,10 +9,16 @@ module.exports = {
     message: 'Internal DDBB Error'
   },
 
-  all_ok: {
+  registration_ok: {
     statusCode: 200,
     code: responses.auraworkout200.code,
-    message: 'Yay! all good'
+    message: 'User has been successfully registered'
+  },
+
+  error_in_params: {
+    statusCode: 403,
+    code: responses.auraworkout403.code,
+    message: 'Email already registered'
   },
 
   register_error: {

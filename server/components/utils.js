@@ -134,7 +134,7 @@ function truncateTable(table) {
     connection.query('TRUNCATE TABLE ' + table + ';', function (err, res) {
       if(err) {
         log('error', '', 'Utils truncateTable truncate error', err);
-        deferred.reject(err);
+        return deferred.reject(err);
       }
       log('info', '', 'Utils truncateTable truncated');
       deferred.resolve(res);
