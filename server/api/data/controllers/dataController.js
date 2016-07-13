@@ -30,7 +30,7 @@ exports.fetchData = function(request, reply) {
     .then(_dataUtils.fetchSeries)
     .then(_dataUtils.storeSeries)
     
-    .then(_dataUtils.storeData)
+    //.then(_dataUtils.storeData)
     .then(function(){
       response = Utils.createResponseData(dataResponses.pettition_accepted);
       log('info', data.logData, 'getData OK response', response);
