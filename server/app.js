@@ -29,8 +29,8 @@ var init = function () {
       port: config.port,
       routes: {
         cors: true
-      },
-      tls: tls
+      }
+      //tls: tls
     });
     //server.connection({address: '0.0.0.0', port: 443, tls: tls });
 
