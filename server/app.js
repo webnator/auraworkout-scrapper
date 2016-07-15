@@ -6,18 +6,20 @@
 var Hapi          = require('hapi');
 var config        = require('./config/environment');
 var GlobalModule  = require('./components/global.js');
-
+var fs            = require('fs');
 
 // Create a server with a host and port
 var server;
-
-
 var setOptions = function () {
   var opts = {};
   opts.routes = {prefix: config.routes.prefix};
   return opts;
 };
 
+var tls = {
+  key: fs.readFileSync(__dirname + '/certs/domain.key'),
+  cert: fs.readFileSync(__dirname + '/certs/domain.crt')
+};
 
 var init = function () {
   return new Promise((resolve, reject) => {
@@ -27,8 +29,10 @@ var init = function () {
       port: config.port,
       routes: {
         cors: true
-      }
+      },
+      tls: tls
     });
+    //server.connection({address: '0.0.0.0', port: 443, tls: tls });
 
     // Register the server and start the application
     server.register(
