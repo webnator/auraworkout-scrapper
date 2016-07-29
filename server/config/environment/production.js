@@ -15,7 +15,7 @@ module.exports = {
   // },
 
   mysqlSettings: {
-    host     : 'ec2-54-201-213-141.us-west-2.compute.amazonaws.com',
+    host     : '52.37.165.21',
     port     : '3306',
     user     : 'toptalAPI',
     password : 'QbX!4{82KOx*',
