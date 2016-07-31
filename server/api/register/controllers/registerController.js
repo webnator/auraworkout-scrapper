@@ -26,6 +26,7 @@ exports.registerUser = function(request, reply) {
     .then(_registerUtils.beginCheckout)
     .then(_registerUtils.checkoutBilling)
     .then(_registerUtils.processPayment)
+    .then(_registerUtils.sendEmail)
     .then(function(data){
       response = Utils.createResponseData(registerResponses.registration_ok);
       log('info', data.logData, 'getRegister OK response', response);

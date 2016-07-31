@@ -22,9 +22,19 @@ module.exports = {
     database : 'zing_reports'
   },
 
+  mandrill: {
+    apiKey: 'hJ-hBo2epIsbRJK5SmbRWg'
+  },
+
+  email: {
+    subject: 'Thanks for joining Aura',
+    from_email: 'customers@aurapulse.com',
+    from_name: 'Customer department',
+  },
+
   mongoSettings: {
   port: '',
     username: 'root',
     password: 'AC1kuG1RVoWH'
-}
+  }
 };

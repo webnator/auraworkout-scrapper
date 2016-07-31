@@ -7,12 +7,14 @@ var log               = Utils.log;
 var config            = require('./../../../config/environment');
 var request           = require('request');
 var cheerio           = require('cheerio');
+var mandrill          = require('mandrill-api/mandrill');
 
 exports.registerUser      = registerUser;
 exports.findUser          = findUser;
 exports.beginCheckout     = beginCheckout;
 exports.checkoutBilling   = checkoutBilling;
 exports.processPayment    = processPayment;
+exports.sendEmail         = sendEmail;
 
 function registerUser(data){
   var deferred = Q.defer();
@@ -238,12 +240,66 @@ function processPayment(data){
     jar: j
   };
 
-  Utils.sendRequest(data).then(function (response) {
+  Utils.sendRequest(data).then(function () {
     log('info', data.logData, 'processPayment (Request) OK');
     deferred.resolve(data);
   }, function (err) {
     log('error', data.logData, 'processPayment (Request) KO', err);
     deferred.reject(registerResponses.register_error);
+  });
+
+  return deferred.promise;
+}
+
+function sendEmail(data) {
+  var deferred = Q.defer();
+  log('info', data.logData, 'sendEmail Accessing');
+
+  var mandrill_client = new mandrill.Mandrill(config.mandrill.apiKey);
+
+  var template_name = 'Registration Email';
+  var template_content = [{
+    firstname: data.payload.firstname,
+    lastname: data.payload.lastname,
+    username: data.payload.username
+  }];
+  var message = {
+    subject: config.email.subject,
+    from_email: config.email.from_email,
+    from_name: config.email.from_name,
+    to: [{
+      email: data.payload.username,
+      name: data.payload.firstname + ' ' + data.payload.firstname,
+      type: 'to'
+    }],
+    headers: {
+      'Reply-To': config.email.from_email
+    },
+    track_opens: true,
+    track_clicks: true,
+    merge: true,
+    merge_language: 'mailchimp',
+    global_merge_vars: [],
+    merge_vars: [],
+    tags: [
+      'customer-registration'
+    ]
+  };
+  var async = false;
+  var mailSendRequest = {
+    template_name: template_name,
+    template_content: template_content,
+    message: message,
+    async: async
+  };
+
+  mandrill_client.messages.sendTemplate(mailSendRequest, function(result) {
+    console.log(result);
+    log('info', data.logData, 'sendEmail - OK');
+    deferred.resolve(data);
+  }, function(e) {
+    log('error', data.logData, 'sendEmail - KO' + e.name + ' - ' + e.message);
+    deferred.resolve(data);
   });
 
   return deferred.promise;
