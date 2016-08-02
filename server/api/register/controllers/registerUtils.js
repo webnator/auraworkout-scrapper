@@ -257,7 +257,14 @@ function sendEmail(data) {
 
   var mandrill_client = new mandrill.Mandrill(config.mandrill.apiKey);
 
-  var template_name = 'Registration Email';
+
+
+  var template_name = 'Registration- 1w Aura Yoga';
+
+  if (data.payload.groupactivationcode === 'tryaura') {
+    template_name = 'Registration- 1c AuraCycle ';
+  }
+
   var template_content = [{
     firstname: data.payload.firstname,
     lastname: data.payload.lastname,
