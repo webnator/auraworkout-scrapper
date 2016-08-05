@@ -29,13 +29,27 @@ module.exports = {
   },
 
   mandrill: {
-    apiKey: 'hJ-hBo2epIsbRJK5SmbRWg'
-  },
-
-  email: {
-    subject: 'Thanks for joining Aura',
-    from_email: 'customers@aurapulse.com',
-    from_name: 'Customer department',
+    apiKey: 'hJ-hBo2epIsbRJK5SmbRWg',
+    defaultConfig: {
+      template: 'Registration- 1w Aura Yoga',
+      subject: 'Thanks for joining Aura',
+      from_email: 'aura@aurapulse.com',
+      from_name: 'Aura'
+    },
+    templates: {
+      'startnow': {
+        template: 'Registration- 1w Aura Yoga',
+        subject: 'Thanks for joining AuraYoga',
+        from_email: 'aura@aurayoga.com',
+        from_name: 'AuraYoga'
+      },
+      'tryaura': {
+        template: 'Registration- 1c AuraCycle',
+        subject: 'Thanks for joining AuraCycle',
+        from_email: 'aura@auracycle.com',
+        from_name: 'AuraCycle'
+      }
+    }
   },
   
   mongoSettings: {

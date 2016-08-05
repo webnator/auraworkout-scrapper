@@ -257,13 +257,12 @@ function sendEmail(data) {
 
   var mandrill_client = new mandrill.Mandrill(config.mandrill.apiKey);
 
-
-
-  var template_name = 'Registration- 1w Aura Yoga';
-
-  if (data.payload.groupactivationcode === 'tryaura') {
-    template_name = 'Registration- 1c AuraCycle ';
+  var emailConfig = config.mandrill.defaultConfig;
+  if (config.mandrill.templates[data.payload.groupactivationcode]) {
+    emailConfig = config.mandrill.templates[data.payload.groupactivationcode];
   }
+
+  var template_name = emailConfig.template;
 
   var template_content = [{
     firstname: data.payload.firstname,
@@ -271,16 +270,16 @@ function sendEmail(data) {
     username: data.payload.username
   }];
   var message = {
-    subject: config.email.subject,
-    from_email: config.email.from_email,
-    from_name: config.email.from_name,
+    subject: emailConfig.subject,
+    from_email: emailConfig.from_email,
+    from_name: emailConfig.from_name,
     to: [{
       email: data.payload.username,
       name: data.payload.firstname + ' ' + data.payload.firstname,
       type: 'to'
     }],
     headers: {
-      'Reply-To': config.email.from_email
+      'Reply-To': emailConfig.from_email
     },
     track_opens: true,
     track_clicks: true,
