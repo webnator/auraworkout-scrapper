@@ -22,6 +22,23 @@ module.exports = {
     database : 'zing_reports'
   },
 
+  dataTables: {
+    mailRules: 'Mail_queries'
+  },
+
+  mailChimp: {
+    url: 'https://us13.api.mailchimp.com/3.0',
+    contact: {
+      company: 'Aura',
+      address1: 'CA',
+      city: 'LA',
+      state: 'CA',
+      zip: '28034',
+      country: 'USA'
+    },
+    apiKey: '79a6c7c03661098fcfa70f177ebc97eb-us4'
+  },
+
   mandrill: {
     apiKey: 'hJ-hBo2epIsbRJK5SmbRWg',
     defaultConfig: {
@@ -47,8 +64,8 @@ module.exports = {
   },
 
   mongoSettings: {
-  port: '',
-    username: 'root',
-    password: 'AC1kuG1RVoWH'
+    port: '27000',
+    username: '',
+    password: ''
   }
 };

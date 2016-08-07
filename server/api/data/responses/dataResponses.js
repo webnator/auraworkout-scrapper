@@ -27,6 +27,12 @@ module.exports = {
     message: 'Error login to Zing platform'
   },
 
+  no_rules: {
+    statusCode: 501,
+    code: responses.auraworkout501.code,
+    message: 'No mailing rules have been implemented'
+  },
+
   customers_listed_ok: {
     statusCode: 200,
     code: responses.auraworkout200.code,

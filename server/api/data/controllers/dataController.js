@@ -2,11 +2,12 @@
 
 var dataResponses = require('./../responses/dataResponses');
 
-var Errors        = require('../../../components/errors');
-var Utils         = require('../../../components/utils');
-var _dataUtils    = require('./../controllers/dataUtils');
+var Errors            = require('../../../components/errors');
+var Utils             = require('../../../components/utils');
+var _dataUtils        = require('./../controllers/dataUtils');
+var _mailingUtils     = require('./../controllers/mailingUtils');
 var _customerUtils    = require('./../controllers/customerUtils');
-var log           = Utils.log;
+var log               = Utils.log;
 
 exports.fetchData = function(request, reply) {
   var data = {
@@ -15,20 +16,25 @@ exports.fetchData = function(request, reply) {
   var response;
   log('info', data.logData, 'getData Accessing');
 
-  _dataUtils.logInPlatform(data)
-    .then(_dataUtils.secondlogInPlatform)
-    
-    .then(_dataUtils.fetchCustomers)
-    .then(_dataUtils.storeCustomers)
-    
-    .then(_dataUtils.fetchSales)
-    .then(_dataUtils.storeSales)
-    
-    .then(_dataUtils.fetchAttendance)
-    .then(_dataUtils.storeAttendance)
+  _mailingUtils.getRules(data)
+    .then(_mailingUtils.fetchFromRules)
+    .then(_mailingUtils.createMailingLists)
+    .then(_mailingUtils.addMailsToList)
 
-    .then(_dataUtils.fetchSeries)
-    .then(_dataUtils.storeSeries)
+  // _dataUtils.logInPlatform(data)
+  //   .then(_dataUtils.secondlogInPlatform)
+  //
+  //   .then(_dataUtils.fetchCustomers)
+  //   .then(_dataUtils.storeCustomers)
+  //
+  //   .then(_dataUtils.fetchSales)
+  //   .then(_dataUtils.storeSales)
+  //
+  //   .then(_dataUtils.fetchAttendance)
+  //   .then(_dataUtils.storeAttendance)
+  //
+  //   .then(_dataUtils.fetchSeries)
+  //   .then(_dataUtils.storeSeries)
     
     //.then(_dataUtils.storeData)
     .then(function(){

@@ -4,7 +4,6 @@ var dataResponses = require('./../responses/dataResponses');
 var Q             = require('q');
 var Utils         = require('../../../components/utils');
 var log           = Utils.log;
-var config        = require('./../../../config/environment');
 
 exports.getData = function(data){
   var deferred = Q.defer();

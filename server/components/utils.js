@@ -35,7 +35,9 @@ w.add(winston.transports.Console, {
 
 exports.DBConnection        = DBConnection;
 exports.truncateTable       = truncateTable;
+exports.performQuery        = performQuery;
 exports.getAllFrom          = getAllFrom;
+exports.getHash             = getHash;
 exports.insertInto          = insertInto;
 exports.insertBulk          = insertBulk;
 exports.insertMultiple      = insertMultiple;
@@ -52,6 +54,10 @@ exports.log                 = log;
 
 function DBConnection() {
   return GlobalModule.getConfigValue('db').pool;
+}
+
+function getHash(stringToHash, algorithm) {
+  return crypto.createHash(algorithm).update(stringToHash).digest('hex');
 }
 
 function getAllFrom(table, sqlQuery) {
@@ -94,6 +100,29 @@ function getAllFrom(table, sqlQuery) {
       
       
       
+    });
+    // And done with the connection.
+    connection.release();
+  });
+  return deferred.promise;
+}
+
+function performQuery(query) {
+  var deferred = Q.defer();
+  var conn = new DBConnection();
+  conn.getConnection(function(err, connection) {
+    if(err) {
+      deferred.reject(err);
+    }
+
+    connection.query(query, function (err, res) {
+      if(err) {
+        deferred.reject(err);
+      }
+      var response = {
+        data: res
+      };
+      deferred.resolve(response);
     });
     // And done with the connection.
     connection.release();
@@ -170,6 +199,7 @@ function insertInto(jsonObject, table) {
       }
     }
     insertSql += fields + ') VALUES (' + values + ') ON DUPLICATE KEY UPDATE ' + update + ';';
+    console.log('INSERT', insertSql);
     connection.query(insertSql, function (err, res) {
       if(err) {
         deferred.reject(err);
@@ -215,7 +245,7 @@ function insertMultiple(jsonObject, table) {
         }
       }
       insertSql += fields + ') VALUES (' + values + ') ON DUPLICATE KEY UPDATE ' + update + ';';
-      connection.query(insertSql, function (err, res) {
+      connection.query(insertSql, function (err) {
         current++;
         if (err) {
           console.log('Error Processing record for ' + table + ':', current, 'of', total, 'ERROR', err);
@@ -227,7 +257,7 @@ function insertMultiple(jsonObject, table) {
     }
   });
 
-  function isDone(total, current, deferred, data) {
+  function isDone(total, current, deferred) {
     if (current >= total) {
       console.log('IS DONE resolving');
       deferred.resolve();

@@ -6,7 +6,7 @@
 var Hapi          = require('hapi');
 var config        = require('./config/environment');
 var GlobalModule  = require('./components/global.js');
-var fs            = require('fs');
+// var fs            = require('fs');
 
 // Create a server with a host and port
 var server;
@@ -16,10 +16,10 @@ var setOptions = function () {
   return opts;
 };
 
-var tls = {
-  key: fs.readFileSync(__dirname + '/certs/domain.key'),
-  cert: fs.readFileSync(__dirname + '/certs/domain.crt')
-};
+// var tls = {
+//   key: fs.readFileSync(__dirname + '/certs/domain.key'),
+//   cert: fs.readFileSync(__dirname + '/certs/domain.crt')
+// };
 
 var init = function () {
   return new Promise((resolve, reject) => {
