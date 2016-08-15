@@ -143,7 +143,6 @@ function beginCheckout(data){
     log('info', data.logData, 'beginCheckout (Request) OK');
 
     var page = response.reqData.body;
-    console.log('CHECK', page);
 
     deferred.resolve(data);
   }, function (err) {
@@ -185,12 +184,9 @@ function checkoutBilling(data){
   Utils.sendRequest(data).then(function (response) {
     log('info', data.logData, 'checkoutBilling (Request) OK');
 
-
     var page = response.reqData.body;
     var $ = cheerio.load(page);
     data.formToken = $('input[name="formtoken"]').val();
-
-    console.log('Form token', data.formToken);
 
     deferred.resolve(data);
   }, function (err) {
@@ -214,7 +210,7 @@ function processPayment(data){
     billinglastname: data.payload.lastname,
     billingaddress: data.payload.address,
     billingzip: data.payload.billingzip,
-    seriesactivationdate: '6/15/16',
+    seriesactivationdate: null,
     _submit: 'Place Order'
   };
 
@@ -257,12 +253,19 @@ function sendEmail(data) {
 
   var mandrill_client = new mandrill.Mandrill(config.mandrill.apiKey);
 
-  var emailConfig = config.mandrill.defaultConfig;
-  if (config.mandrill.templates[data.payload.groupactivationcode]) {
-    emailConfig = config.mandrill.templates[data.payload.groupactivationcode];
+  var emailConfig = JSON.parse(JSON.stringify(config.mandrill.defaultConfig));
+  if (data.payload.email_template) {
+    emailConfig.template = data.payload.email_template;
   }
-
-  var template_name = emailConfig.template;
+  if (data.payload.email_subject) {
+    emailConfig.subject = data.payload.email_subject;
+  }
+  if (data.payload.email_from) {
+    emailConfig.from_email = data.payload.email_from;
+  }
+  if (data.payload.email_name) {
+    emailConfig.from_name = data.payload.email_name;
+  }
 
   var template_content = [{
     firstname: data.payload.firstname,
@@ -293,14 +296,13 @@ function sendEmail(data) {
   };
   var async = false;
   var mailSendRequest = {
-    template_name: template_name,
+    template_name: emailConfig.template,
     template_content: template_content,
     message: message,
     async: async
   };
 
   mandrill_client.messages.sendTemplate(mailSendRequest, function(result) {
-    console.log(result);
     log('info', data.logData, 'sendEmail - OK');
     deferred.resolve(data);
   }, function(e) {
