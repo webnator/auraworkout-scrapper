@@ -99,13 +99,18 @@ function findUser(data){
 
 function beginCheckout(data){
   var deferred = Q.defer();
-  log('info', data.logData, 'beginCheckout');
+  log('info', data.logData, 'beginCheckout')
+
+  var series_id = 159;
+  if (data.payload.series_id && data.payload.series_id !== '') {
+    series_id = parseInt(data.payload.series_id);
+  }
 
   var formData = {
     customerid: data.customerId,
     rowcount: 1,
     skuid0: null,
-    seriesid0: 159,
+    seriesid0: series_id,
     giftcardid0: null,
     quantity0: 1,
     discount0: 0,
@@ -141,8 +146,6 @@ function beginCheckout(data){
 
   Utils.sendRequest(data).then(function (response) {
     log('info', data.logData, 'beginCheckout (Request) OK');
-
-    var page = response.reqData.body;
 
     deferred.resolve(data);
   }, function (err) {
@@ -254,16 +257,16 @@ function sendEmail(data) {
   var mandrill_client = new mandrill.Mandrill(config.mandrill.apiKey);
 
   var emailConfig = JSON.parse(JSON.stringify(config.mandrill.defaultConfig));
-  if (data.payload.email_template) {
+  if (data.payload.email_template && data.payload.email_template !== '') {
     emailConfig.template = data.payload.email_template;
   }
-  if (data.payload.email_subject) {
+  if (data.payload.email_subject && data.payload.email_subject !== '') {
     emailConfig.subject = data.payload.email_subject;
   }
-  if (data.payload.email_from) {
+  if (data.payload.email_from && data.payload.email_from !== '') {
     emailConfig.from_email = data.payload.email_from;
   }
-  if (data.payload.email_name) {
+  if (data.payload.email_name && data.payload.email_name !== '') {
     emailConfig.from_name = data.payload.email_name;
   }
 

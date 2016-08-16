@@ -22,6 +22,7 @@ function registerModelJoi() {
     company: Joi.string().required(),
     emergencycontact: Joi.string().required(),
     emergencyphone: Joi.string().required(),
+    series_id: Joi.any().required(),
 
     firstname: Joi.string().required(),
     lastname: Joi.string().required(),
