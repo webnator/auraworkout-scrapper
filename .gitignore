@@ -1,6 +1,8 @@
 # Mac
 .DS_Store
 cert
+server/config/environment/local.js
+server/config/environment/production.js
 
 # Win
 Thumbs.db
