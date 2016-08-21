@@ -5,7 +5,9 @@ var Q             = require('q');
 var Utils         = require('../../../components/utils');
 var log           = Utils.log;
 
-exports.getData = function(data){
+exports.getData = getData;
+
+function getData(data){
   var deferred = Q.defer();
 
   log('info', data.logData, 'getData accesing');
@@ -49,5 +51,4 @@ exports.getData = function(data){
   });
 
   return deferred.promise;
-};
-
+}

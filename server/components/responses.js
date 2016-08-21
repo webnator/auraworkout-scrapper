@@ -28,6 +28,11 @@ module.exports = {
     info: 'Resource successfully removed'
   },
 
+  auraworkout204: {
+    code: 'AURAWORKOUT204',
+    info: 'No content'
+  },
+
   auraworkout400: {
     code: 'AURAWORKOUT400',
     info: 'Bad request'
@@ -66,5 +71,10 @@ module.exports = {
   auraworkout501: {
     code: 'AURAWORKOUT501',
     info: 'Not implemented'
+  },
+
+  auraworkout503: {
+    code: 'AURAWORKOUT503',
+    info: 'External service unavailable'
   }
 };

@@ -10,7 +10,19 @@ var fs            = require('fs');
 var mkpath        = require('mkpath');
 var Converter     = require('csvtojson').Converter;
 
-exports.logInPlatform = function(data){
+exports.logInPlatform = logInPlatform;
+exports.secondlogInPlatform = secondlogInPlatform;
+exports.fetchCustomers = fetchCustomers;
+exports.fetchSales = fetchSales;
+exports.fetchAttendance = fetchAttendance;
+exports.fetchSeries = fetchSeries;
+exports.storeData = storeData; // Deprecated - Will come back as reports
+exports.storeCustomers = storeCustomers;
+exports.storeSales = storeSales;
+exports.storeAttendance = storeAttendance;
+exports.storeSeries = storeSeries;
+
+function logInPlatform(data){
   var deferred = Q.defer();
 
   log('info', data.logData, 'logInPlatform accesing');
@@ -36,9 +48,9 @@ exports.logInPlatform = function(data){
   });
 
   return deferred.promise;
-};
+}
 
-exports.secondlogInPlatform = function(data){
+function secondlogInPlatform(data){
   var deferred = Q.defer();
 
   log('info', data.logData, 'secondlogInPlatform accesing');
@@ -72,9 +84,9 @@ exports.secondlogInPlatform = function(data){
   });
 
   return deferred.promise;
-};
+}
 
-exports.fetchCustomers = function(data){
+function fetchCustomers(data){
   var deferred = Q.defer();
 
   log('info', data.logData, 'fetchCustomers accesing');
@@ -116,9 +128,9 @@ exports.fetchCustomers = function(data){
   });
 
   return deferred.promise;
-};
+}
 
-exports.fetchSales = function(data){
+function fetchSales(data){
   var deferred = Q.defer();
 
   log('info', data.logData, 'fetchSales accesing');
@@ -163,9 +175,9 @@ exports.fetchSales = function(data){
   });
 
   return deferred.promise;
-};
+}
 
-exports.fetchAttendance = function(data){
+function fetchAttendance(data){
   var deferred = Q.defer();
 
   log('info', data.logData, 'fetchAttendance accesing');
@@ -208,9 +220,9 @@ exports.fetchAttendance = function(data){
   });
 
   return deferred.promise;
-};
+}
 
-exports.fetchSeries = function(data){
+function fetchSeries(data){
   var deferred = Q.defer();
 
   log('info', data.logData, 'fetchSeries accesing');
@@ -252,9 +264,9 @@ exports.fetchSeries = function(data){
   });
 
   return deferred.promise;
-};
+}
 
-exports.storeData = function(data){
+function storeData(data){
   var deferred = Q.defer();
   log('info', data.logData, 'dataAction (Promise) OK');
 
@@ -284,9 +296,9 @@ exports.storeData = function(data){
   });
   
   return deferred.promise;
-};
+}
 
-exports.storeCustomers = function(data){
+function storeCustomers(data){
   var deferred = Q.defer();
 
   log('info', data.logData, 'storeCustomers accesing', { totalCustomers: data.output.customers.length });
@@ -300,9 +312,9 @@ exports.storeCustomers = function(data){
   });
 
   return deferred.promise;
-};
+}
 
-exports.storeSales = function(data){
+function storeSales(data){
   var deferred = Q.defer();
   log('info', data.logData, 'storeSales accesing', { totalSales: data.output.sales.length });
 
@@ -315,9 +327,9 @@ exports.storeSales = function(data){
   });
 
   return deferred.promise;
-};
+}
 
-exports.storeAttendance = function(data){
+function storeAttendance(data){
   var deferred = Q.defer();
   log('info', data.logData, 'storeAttendance accesing', { totalAttendances: data.output.attendance.length });
 
@@ -330,9 +342,9 @@ exports.storeAttendance = function(data){
   });
 
   return deferred.promise;
-};
+}
 
-exports.storeSeries = function(data){
+function storeSeries(data){
   var deferred = Q.defer();
   log('info', data.logData, 'storeSeries accesing', { totalSeries: data.output.series.length });
 
@@ -345,4 +357,4 @@ exports.storeSeries = function(data){
   });
 
   return deferred.promise;
-};
+}

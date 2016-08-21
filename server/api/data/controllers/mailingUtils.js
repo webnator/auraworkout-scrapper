@@ -29,7 +29,7 @@ function getRules(data){
 
   }, function (err) {
     log('error', data.logData, 'mailingUtils getRules KO - Error', err);
-    deferred.reject(err);
+    deferred.reject(dataResponses.internal_ddbb_error);
   });
 
   return deferred.promise;
@@ -58,7 +58,7 @@ function processMailRule(data, rule) {
     deferred.resolve(data);
   }, function (err) {
     log('error', data.logData, 'mailingUtils processMailRule KO - Error', err);
-    deferred.reject(err);
+    deferred.reject(dataResponses.internal_ddbb_error);
   });
 
   return deferred.promise;
@@ -132,7 +132,7 @@ function createMailchimpList(data, rule) {
 
   }, function (err) {
     log('error', data.logData, 'mailingUtils createMailchimpList KO - Error', err);
-    deferred.reject(err);
+    deferred.reject(dataResponses.mailchimp_error);
   });
 
   return deferred.promise;
@@ -192,13 +192,12 @@ function addUsersToList(data, rule) {
     }
   };
 
-  Utils.sendRequest(mailData).then(function (response) {
+  Utils.sendRequest(mailData).then(function () {
     log('info', data.logData, 'mailingUtils addUsersToList - Created on Mailchimp');
-    console.log('RESPONSE', response.reqData.body);
     deferred.resolve(data);
   }, function (err) {
     log('error', data.logData, 'mailingUtils addUsersToList KO - Error', err);
-    deferred.reject(err);
+    deferred.reject(dataResponses.mailchimp_error);
   });
 
   return deferred.promise;

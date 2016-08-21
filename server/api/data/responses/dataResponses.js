@@ -43,5 +43,11 @@ module.exports = {
     statusCode: 403,
     code: responses.auraworkout403.code,
     message: 'The required data set is not valid'
+  },
+
+  mailchimp_error: {
+    statusCode: 503,
+    code: responses.auraworkout503.code,
+    message: 'Mailchimp responded with error'
   }
 };

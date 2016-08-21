@@ -99,7 +99,7 @@ function findUser(data){
 
 function beginCheckout(data){
   var deferred = Q.defer();
-  log('info', data.logData, 'beginCheckout')
+  log('info', data.logData, 'beginCheckout');
 
   var series_id = 159;
   if (data.payload.series_id && data.payload.series_id !== '') {
@@ -144,7 +144,7 @@ function beginCheckout(data){
     jar: j
   };
 
-  Utils.sendRequest(data).then(function (response) {
+  Utils.sendRequest(data).then(function () {
     log('info', data.logData, 'beginCheckout (Request) OK');
 
     deferred.resolve(data);
@@ -305,7 +305,7 @@ function sendEmail(data) {
     async: async
   };
 
-  mandrill_client.messages.sendTemplate(mailSendRequest, function(result) {
+  mandrill_client.messages.sendTemplate(mailSendRequest, function() {
     log('info', data.logData, 'sendEmail - OK');
     deferred.resolve(data);
   }, function(e) {

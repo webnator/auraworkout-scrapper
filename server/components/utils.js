@@ -378,7 +378,7 @@ function logData(request){
 function validateSchema(data){
   var deferred  = Q.defer();
 
-  Joi.validate(data.payload, data.schema, function(err) {
+  Joi.validate(data.payload, data.schema, function(err, val) {
     if (err) {
       var error = {
         message: err.details[0].message,
@@ -387,6 +387,7 @@ function validateSchema(data){
       };
       deferred.reject(error);
     } else {
+      data.payload = val;
       deferred.resolve(data);
     }
   });
