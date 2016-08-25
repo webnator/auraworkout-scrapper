@@ -27,8 +27,6 @@ function registerModelJoi() {
     firstname: Joi.string().required(),
     lastname: Joi.string().required(),
     username: Joi.string().email().required(),
-    password: Joi.string().required(),
-    passwordconfirm: Joi.string().required(),
     agreeterms: Joi.string().valid('1').required(),
 
     email_template: Joi.string(),

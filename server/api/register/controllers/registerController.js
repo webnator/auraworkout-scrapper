@@ -19,6 +19,7 @@ exports.registerUser = function(request, reply) {
   log('info', data.logData, 'getRegister Accessing');
 
   Utils.validateSchema(data)
+    .then(_registerUtils.setPassword)
     .then(_registerUtils.registerUser)
     .then(_dataUtils.logInPlatform)
     .then(_dataUtils.secondlogInPlatform)

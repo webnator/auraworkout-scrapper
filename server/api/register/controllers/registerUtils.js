@@ -8,6 +8,8 @@ var config            = require('./../../../config/environment');
 var request           = require('request');
 var cheerio           = require('cheerio');
 var mandrill          = require('mandrill-api/mandrill');
+var generatePassword  = require('password-generator');
+
 
 exports.registerUser      = registerUser;
 exports.findUser          = findUser;
@@ -15,6 +17,19 @@ exports.beginCheckout     = beginCheckout;
 exports.checkoutBilling   = checkoutBilling;
 exports.processPayment    = processPayment;
 exports.sendEmail         = sendEmail;
+exports.setPassword       = setPassword;
+
+function setPassword(data) {
+  var deferred = Q.defer();
+
+  var genPassword = generatePassword();
+  data.payload.password = genPassword;
+  data.payload.passwordconfirm = genPassword;
+
+  deferred.resolve(data);
+
+  return deferred.promise;
+}
 
 function registerUser(data){
   var deferred = Q.defer();
@@ -270,11 +285,25 @@ function sendEmail(data) {
     emailConfig.from_name = data.payload.email_name;
   }
 
-  var template_content = [{
-    firstname: data.payload.firstname,
-    lastname: data.payload.lastname,
-    username: data.payload.username
-  }];
+  var template_content = [
+    {
+      name: 'firstname',
+      content: data.payload.firstname
+    },
+    {
+      name: 'lastname',
+      content: data.payload.lastname
+    },
+    {
+      name: 'username',
+      content: data.payload.username
+    },
+    {
+      name: 'password',
+      content: data.payload.password
+    }
+  ];
+
   var message = {
     subject: emailConfig.subject,
     from_email: emailConfig.from_email,
@@ -290,9 +319,13 @@ function sendEmail(data) {
     track_opens: true,
     track_clicks: true,
     merge: true,
-    merge_language: 'mailchimp',
-    global_merge_vars: [],
-    merge_vars: [],
+    merge_language: 'handlebars',
+    global_merge_vars: [
+      {
+        name: 'password',
+        content: data.payload.password
+      }
+    ],
     tags: [
       'customer-registration'
     ]
@@ -304,7 +337,7 @@ function sendEmail(data) {
     message: message,
     async: async
   };
-
+  
   mandrill_client.messages.sendTemplate(mailSendRequest, function() {
     log('info', data.logData, 'sendEmail - OK');
     deferred.resolve(data);
