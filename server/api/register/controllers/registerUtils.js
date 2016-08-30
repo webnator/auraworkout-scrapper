@@ -8,8 +8,6 @@ var config            = require('./../../../config/environment');
 var request           = require('request');
 var cheerio           = require('cheerio');
 var mandrill          = require('mandrill-api/mandrill');
-var generatePassword  = require('password-generator');
-
 
 exports.registerUser      = registerUser;
 exports.findUser          = findUser;
@@ -22,11 +20,16 @@ exports.setPassword       = setPassword;
 function setPassword(data) {
   var deferred = Q.defer();
 
-  var genPassword = generatePassword();
-  data.payload.password = genPassword;
-  data.payload.passwordconfirm = genPassword;
+  if (data.payload.password) {
+    deferred.resolve(data);
+  } else {
+    var generatePassword  = require('password-generator');
+    var genPassword = generatePassword();
+    data.payload.password = genPassword;
+    data.payload.passwordconfirm = genPassword;
 
-  deferred.resolve(data);
+    deferred.resolve(data);
+  }
 
   return deferred.promise;
 }
@@ -337,7 +340,7 @@ function sendEmail(data) {
     message: message,
     async: async
   };
-  
+
   mandrill_client.messages.sendTemplate(mailSendRequest, function() {
     log('info', data.logData, 'sendEmail - OK');
     deferred.resolve(data);
