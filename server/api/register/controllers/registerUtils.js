@@ -19,8 +19,10 @@ exports.setPassword       = setPassword;
 
 function setPassword(data) {
   var deferred = Q.defer();
+  log('info', data.logData, 'registerUtils setPassword | Accessing');
 
   if (data.payload.password) {
+    log('info', data.logData, 'registerUtils setPassword | OK password already sent');
     deferred.resolve(data);
   } else {
     var generatePassword  = require('password-generator');
@@ -28,6 +30,7 @@ function setPassword(data) {
     data.payload.password = genPassword;
     data.payload.passwordconfirm = genPassword;
 
+    log('info', data.logData, 'registerUtils setPassword | OK password generated');
     deferred.resolve(data);
   }
 
@@ -36,16 +39,18 @@ function setPassword(data) {
 
 function registerUser(data){
   var deferred = Q.defer();
-  
+
+  log('info', data.logData, 'registerutils registerUser | Accessing');
   data.reqData = {
     method: 'POST',
     url: config.zingRegisterUrl,
-    form: data.payload
+    form: data.payload,
+    qs: {
+      action: 'Account.new'
+    }
   };
 
   Utils.sendRequest(data).then(function (response) {
-    log('info', data.logData, 'registerUser (Request) OK');
-
     if (response.reqData.body !== '') {
 
       var page = response.reqData.body;
@@ -64,12 +69,14 @@ function registerUser(data){
           error.field = errorField;
         }
       }
+      log('error', data.logData, 'registerutils registerUser | Error', error);
       return deferred.reject(error);
     } else {
+      log('info', data.logData, 'registerutils registerUser | OK');
       deferred.resolve(data);
     }
   }, function (err) {
-    log('error', data.logData, 'registerUser (Request) KO', err);
+    log('error', data.logData, 'registerutils registerUser | (Request) KO', err);
     deferred.reject(registerResponses.register_error);
   });
 
@@ -78,7 +85,7 @@ function registerUser(data){
 
 function findUser(data){
   var deferred = Q.defer();
-  log('info', data.logData, 'findUser');
+  log('info', data.logData, 'registerUrils findUser | Accessing');
   
   var j = request.jar();
   var cookieStr = data.authCookie[0];
@@ -99,7 +106,7 @@ function findUser(data){
   };
 
   Utils.sendRequest(data).then(function (response) {
-    log('info', data.logData, 'registerUser (Request) OK');
+    log('info', data.logData, 'registerUtls findUser | (Request) OK');
 
     var page = response.reqData.body;
     var $ = cheerio.load(page);
@@ -108,7 +115,7 @@ function findUser(data){
 
     deferred.resolve(data);
   }, function (err) {
-    log('error', data.logData, 'registerUser (Request) KO', err);
+    log('error', data.logData, 'registerUtls findUser | (Request) KO', err);
     deferred.reject(registerResponses.register_error);
   });
 
