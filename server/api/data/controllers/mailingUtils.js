@@ -5,11 +5,11 @@ var Q             = require('q');
 var Utils         = require('../../../components/utils');
 var log           = Utils.log;
 var config        = require('./../../../config/environment');
+var Rule          = require('./rules');
 
 exports.getRules            = getRules;
 exports.fetchFromRules      = fetchFromRules;
-exports.createMailingLists  = createMailingLists;
-exports.addMailsToList      = addMailsToList;
+exports.performRuleAction   = performRuleAction;
 
 function getRules(data){
   var deferred = Q.defer();
@@ -33,6 +33,19 @@ function getRules(data){
   });
 
   return deferred.promise;
+}
+
+
+function performRuleAction(data) {
+  var promiseQueue = [];
+  data = data[0].value;
+
+  for (let i = 0; i < data.mailRules.length; i++) {
+    var rule = new Rule(data, data.mailRules[i]);
+    promiseQueue.push(rule.execute());
+  }
+
+  return Q.allSettled(promiseQueue);
 }
 
 function fetchFromRules(data) {
@@ -59,145 +72,6 @@ function processMailRule(data, rule) {
   }, function (err) {
     log('error', data.logData, 'mailingUtils processMailRule KO - Error', err);
     deferred.reject(dataResponses.internal_ddbb_error);
-  });
-
-  return deferred.promise;
-}
-
-function createMailingLists(data) {
-  var promiseQueue = [];
-  data = data[0].value;
-
-  log('info', data.logData, 'mailingUtils createMailList accesing');
-
-
-  for (var i = 0; i < data.mailRules.length; i++) {
-    var rule = data.mailRules[i];
-    if (rule.list_id === null) {
-      promiseQueue.push(createMailchimpList(data, rule));
-    }
-
-  }
-  if (promiseQueue.length <= 0) {
-    log('info', data.logData, 'mailingUtils createMailList allListsCreated - OK');
-    promiseQueue.push(data);
-  }
-  return Q.allSettled(promiseQueue);
-}
-
-function createMailchimpList(data, rule) {
-  var deferred = Q.defer();
-
-  log('info', data.logData, 'mailingUtils createMailchimpList accesing');
-
-  var auth = 'Basic ' + new Buffer('anyUsername:' + config.mailChimp.apiKey).toString('base64');
-  var mailData = {
-    logData: data.logData,
-    reqData: {
-      method: 'POST',
-      url: config.mailChimp.url + '/lists',
-      headers: {
-        'Authorization': auth
-      },
-      json: {
-        name: rule.list_name,
-        contact: config.mailChimp.contact,
-        permission_reminder: 'You’re receiving this email as a customer of Aura',
-        campaign_defaults: {
-          from_name: 'Aura',
-          from_email: 'aura@auraworkout.com',
-          subject: 'Aura',
-          language: 'en'
-        },
-        visibility: 'pub',
-        email_type_option: true
-      }
-    }
-  };
-
-  Utils.sendRequest(mailData).then(function (response) {
-    log('info', data.logData, 'mailingUtils createMailchimpList - Created on Mailchimp');
-    rule.list_id = response.reqData.body.id;
-
-    var newRule = JSON.parse(JSON.stringify(rule));
-    delete newRule.result;
-
-    Utils.insertInto(newRule, config.dataTables.mailRules).then(function () {
-      log('info', data.logData, 'mailingUtils createMailchimpList - Updated in DB');
-      deferred.resolve(data);
-    }, function (err) {
-      log('error', data.logData, 'mailingUtils createMailchimpList - KO updating', err);
-      deferred.reject(dataResponses.internal_ddbb_error);
-    });
-
-  }, function (err) {
-    log('error', data.logData, 'mailingUtils createMailchimpList KO - Error', err);
-    deferred.reject(dataResponses.mailchimp_error);
-  });
-
-  return deferred.promise;
-}
-
-function addMailsToList(data) {
-  var promiseQueue = [];
-  data = data[0].value;
-
-  log('info', data.logData, 'mailingUtils addMailsToList accesing');
-
-  for (var i = 0; i < data.mailRules.length; i++) {
-    var rule = data.mailRules[i];
-    if (rule.result && rule.result.length > 0 && rule.result[0].email) {
-      promiseQueue.push(addUsersToList(data, rule));
-    }
-
-  }
-  if (promiseQueue.length <= 0) {
-    log('info', data.logData, 'mailingUtils addMailsToList nothingToAdd - OK');
-    promiseQueue.push(data);
-  }
-  return Q.allSettled(promiseQueue);
-}
-
-function addUsersToList(data, rule) {
-  var deferred = Q.defer();
-  log('info', data.logData, 'mailingUtils addUsersToList accesing');
-  var auth = 'Basic ' + new Buffer('anyUsername:' + config.mailChimp.apiKey).toString('base64');
-
-  var putOperationsArray = [];
-  for (var i = 0; i < rule.result.length; i++) {
-    var email = rule.result[i].email;
-    var opBody = {
-      email_address: email,
-      status_if_new: 'subscribed'
-    };
-    var operation = {
-      method: 'PUT',
-      path: '/lists/' + rule.list_id + '/members/' + Utils.getHash(email, 'md5'),
-      body: JSON.stringify(opBody)
-    };
-    putOperationsArray.push(operation);
-  }
-
-  var mailData = {
-    logData: data.logData,
-    reqData: {
-      method: 'POST',
-      url: config.mailChimp.url + '/batches',
-      headers: {
-        'Authorization': auth
-      },
-      json: {
-        operations: putOperationsArray
-      }
-    }
-  };
-
-  Utils.sendRequest(mailData).then(function () {
-    log('info', data.logData, 'mailingUtils addUsersToList - Created on Mailchimp');
-    deferred.resolve(data);
-  }, function (err) {
-    log('error', data.logData, 'mailingUtils addUsersToList KO - Error', err);
-    deferred.reject(dataResponses.mailchimp_error);
   });
 
   return deferred.promise;
