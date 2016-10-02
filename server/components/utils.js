@@ -199,7 +199,6 @@ function insertInto(jsonObject, table) {
       }
     }
     insertSql += fields + ') VALUES (' + values + ') ON DUPLICATE KEY UPDATE ' + update + ';';
-    console.log('INSERT', insertSql);
     connection.query(insertSql, function (err, res) {
       if(err) {
         deferred.reject(err);
@@ -226,6 +225,7 @@ function insertMultiple(jsonObject, table) {
     var total = jsonObject.length;
     var current = 0;
     var i, y;
+    isDone(total, current, deferred);
     for (i = 0; i < jsonObject.length; i++) {
 
       var insertSql = 'INSERT INTO `' + table + '` (';
@@ -259,7 +259,6 @@ function insertMultiple(jsonObject, table) {
 
   function isDone(total, current, deferred) {
     if (current >= total) {
-      console.log('IS DONE resolving');
       deferred.resolve();
     }
   }

@@ -10,6 +10,7 @@ var Rule          = require('./rules');
 exports.getRules            = getRules;
 exports.fetchFromRules      = fetchFromRules;
 exports.performRuleAction   = performRuleAction;
+exports.storeRulesResults   = storeRulesResults;
 
 function getRules(data){
   var deferred = Q.defer();
@@ -18,7 +19,6 @@ function getRules(data){
 
   Utils.performQuery('SELECT * FROM ' + config.dataTables.mailRules + ' WHERE active=1').then(function (response) {
     data.mailRules = response.data;
-
     if(data.mailRules.length > 0) {
       log('info', data.logData, 'mailingUtils getRules OK');
       deferred.resolve(data);
@@ -29,6 +29,34 @@ function getRules(data){
 
   }, function (err) {
     log('error', data.logData, 'mailingUtils getRules KO - Error', err);
+    deferred.reject(dataResponses.internal_ddbb_error);
+  });
+
+  return deferred.promise;
+}
+
+function fetchFromRules(data) {
+  var promiseQueue = [];
+
+  log('info', data.logData, 'mailingUtils fetchFromRules accesing');
+
+  for (var i = 0; i < data.mailRules.length; i++) {
+    promiseQueue.push(processMailRule(data, data.mailRules[i]));
+  }
+
+  return Q.allSettled(promiseQueue);
+}
+
+function processMailRule(data, rule) {
+  var deferred = Q.defer();
+  log('info', data.logData, 'mailingUtils processMailRule accesing');
+
+  Utils.performQuery(rule.query).then(function (response) {
+    log('info', data.logData, 'mailingUtils processMailRule OK');
+    rule.result = response.data;
+    deferred.resolve(data);
+  }, function (err) {
+    log('error', data.logData, 'mailingUtils processMailRule KO - Error', err);
     deferred.reject(dataResponses.internal_ddbb_error);
   });
 
@@ -48,31 +76,30 @@ function performRuleAction(data) {
   return Q.allSettled(promiseQueue);
 }
 
-function fetchFromRules(data) {
-  var promiseQueue = [];
+function storeRulesResults(data) {
+  var deferred = Q.defer();
+  data = data[0].value;
+  log('info', data.logData, 'mailingUtils storeRulesResults | accesing');
 
-  log('info', data.logData, 'mailingUtils fetchFromRules accesing');
-
-  for (var i = 0; i < data.mailRules.length; i++) {
-    promiseQueue.push(processMailRule(data, data.mailRules[i]));
+  var results = [];
+  for (let i = 0; i < data.mailRules.length; i++) {
+    var result = {
+      ruleID: data.mailRules[i].id,
+      usersAffected: data.mailRules[i].result.length,
+      result: JSON.stringify(data.mailRules[i].result)
+    };
+    results.push(result);
   }
 
-  return Q.allSettled(promiseQueue);
-}
-
-function processMailRule(data, rule) {
-  var deferred = Q.defer();
-
-  log('info', data.logData, 'mailingUtils processMailRule accesing');
-
-  Utils.performQuery(rule.query).then(function (response) {
-    log('info', data.logData, 'mailingUtils processMailRule OK');
-    rule.result = response.data;
+  Utils.insertMultiple(results, 'RulesResult').then(function () {
+    log('info', data.logData, 'mailingUtils storeRulesResults | OK');
     deferred.resolve(data);
-  }, function (err) {
-    log('error', data.logData, 'mailingUtils processMailRule KO - Error', err);
-    deferred.reject(dataResponses.internal_ddbb_error);
+  }).catch(function (err) {
+    log('error', data.logData, 'mailingUtils storeRulesResults | KO', err);
+    deferred.resolve(data);
   });
 
   return deferred.promise;
 }
+
+

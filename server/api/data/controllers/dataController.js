@@ -37,8 +37,7 @@ function fetchData(request, reply) {
     .then(_mailingUtils.getRules)
     .then(_mailingUtils.fetchFromRules)
     .then(_mailingUtils.performRuleAction)
-    // .then(_mailingUtils.createMailingLists)
-    // .then(_mailingUtils.addMailsToList)
+    .then(_mailingUtils.storeRulesResults)
 
     //.then(_dataUtils.storeData)
     .then(function(){
