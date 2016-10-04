@@ -19,6 +19,10 @@ function fetchData(request, reply) {
   var response;
   log('info', data.logData, 'getData Accessing');
 
+  response = Utils.createResponseData(dataResponses.pettition_accepted);
+  log('info', data.logData, 'getData OK response', response);
+  reply(response).code(response.result.statusCode);
+
   _dataUtils.logInPlatform(data)
     .then(_dataUtils.secondlogInPlatform)
 
@@ -41,14 +45,12 @@ function fetchData(request, reply) {
 
     //.then(_dataUtils.storeData)
     .then(function(){
-      response = Utils.createResponseData(dataResponses.pettition_accepted);
-      log('info', data.logData, 'getData OK response', response);
-      return reply(response).code(response.result.statusCode);
+      log('info', data.logData, 'Finished data fetching');
+      return;
     })
     .fail(function(err){
-      response = Errors.createGeneralError(err);
-      log('error', data.logData, 'getData KO - Error: ', response);
-      return reply(response).code(err.statusCode);
+      log('error', data.logData, 'Finished data fetching with errors', err);
+      return;
     });
 }
 
