@@ -20,19 +20,19 @@ function fetchData(request, reply) {
   log('info', data.logData, 'getData Accessing');
 
   _dataUtils.logInPlatform(data)
-    // .then(_dataUtils.secondlogInPlatform)
-    //
-    // .then(_dataUtils.fetchCustomers)
-    // .then(_dataUtils.storeCustomers)
-    //
-    // .then(_dataUtils.fetchSales)
-    // .then(_dataUtils.storeSales)
-    //
-    // .then(_dataUtils.fetchAttendance)
-    // .then(_dataUtils.storeAttendance)
-    //
-    // .then(_dataUtils.fetchSeries)
-    // .then(_dataUtils.storeSeries)
+    .then(_dataUtils.secondlogInPlatform)
+
+    .then(_dataUtils.fetchCustomers)
+    .then(_dataUtils.storeCustomers)
+
+    .then(_dataUtils.fetchSales)
+    .then(_dataUtils.storeSales)
+
+    .then(_dataUtils.fetchAttendance)
+    .then(_dataUtils.storeAttendance)
+
+    .then(_dataUtils.fetchSeries)
+    .then(_dataUtils.storeSeries)
 
     .then(_mailingUtils.getRules)
     .then(_mailingUtils.fetchFromRules)
