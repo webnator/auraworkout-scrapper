@@ -5,7 +5,7 @@ var log = Utils.log;
 
 class Rule {
   constructor (data, rule) {
-    log('info', '', 'Creating rule ' + rule);
+    log('info', '', 'Creating rule ' + JSON.stringify(rule));
     this.rule = rule;
     this.data = data;
     this.actionName = rule.action;
