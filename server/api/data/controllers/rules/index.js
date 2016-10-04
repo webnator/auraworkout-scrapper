@@ -1,6 +1,6 @@
 'use strict';
 
-var Utils = require('../../../components/utils');
+var Utils = require('./../../../../components/utils');
 var log = Utils.log;
 
 class Rule {
