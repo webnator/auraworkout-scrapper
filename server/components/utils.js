@@ -254,6 +254,9 @@ function insertMultiple(jsonObject, table) {
         }
         isDone(total, current, deferred);
       });
+
+      // And done with the connection.
+      connection.release();
     }
   });
 
