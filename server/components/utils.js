@@ -225,7 +225,7 @@ function insertMultiple(jsonObject, table) {
     var total = jsonObject.length;
     var current = 0;
     var i, y;
-    isDone(total, current, deferred);
+    isDone(total, current, deferred, connection);
     for (i = 0; i < jsonObject.length; i++) {
 
       var insertSql = 'INSERT INTO `' + table + '` (';
@@ -252,16 +252,18 @@ function insertMultiple(jsonObject, table) {
         } else {
           console.log('Processing record for ' + table + ':', current, 'of', total);
         }
-        isDone(total, current, deferred);
+        isDone(total, current, deferred, connection);
       });
 
-      // And done with the connection.
-      connection.release();
+
+
     }
   });
 
-  function isDone(total, current, deferred) {
+  function isDone(total, current, deferred, connection) {
     if (current >= total) {
+      // And done with the connection.
+      connection.release();
       deferred.resolve();
     }
   }
