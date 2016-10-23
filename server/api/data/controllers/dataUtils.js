@@ -177,11 +177,14 @@ function fetchSales(data){
   return deferred.promise;
 }
 
+
 function fetchAttendance(data){
   var deferred = Q.defer();
+  let attendanceCounter = 0;
 
   log('info', data.logData, 'fetchAttendance accesing');
   var attendanceUrl = config.zingUrl;
+  var attendanceRooms = config.zingConfigurations.attendance.rooms;
 
   var j = request.jar();
   var cookieStr = data.authCookie[0];
@@ -194,30 +197,42 @@ function fetchAttendance(data){
   if (!data.output) {
     data.output = {};
   }
+  data.output.attendance = [];
 
-  data.reqData = {
-    method: 'GET',
-    url: attendanceUrl,
-    qs: {
-      action: 'Report.attendanceExport',
-      export: 'csv'
-    },
-    jar: j
-  };
+  for (let i = 0; i < attendanceRooms.length; i++) {
+    var room = attendanceRooms[i];
 
-  Utils.sendRequest(data).then(function (data) {
-    var converter = new Converter({});
-    converter.fromString(data.reqData.body, function(err, result){
-      if(err) {
-        return deferred.reject(err);
-      }
-      data.output.attendance = result;
-      deferred.resolve(data);
+    data.reqData = {
+      method: 'GET',
+      url: attendanceUrl,
+      qs: {
+        action: 'Report.attendanceExport',
+        export: 'csv',
+        roomid: room
+      },
+      jar: j
+    };
+
+    Utils.sendRequest(data).then(function (data) {
+      var converter = new Converter({});
+      // console.log('RESPONSE', data.reqData.response.statusCode);
+      converter.fromString(data.reqData.body, function(err, result){
+        if(err) {
+          return deferred.reject(err);
+        }
+        data.output.attendance = data.output.attendance.concat(result);
+        attendanceCounter++;
+
+        if (attendanceCounter >= attendanceRooms.length) {
+          deferred.resolve(data);
+        }
+      });
+    }, function (err) {
+      log('error', data.logData, 'fetchAttendance (Request) KO', err);
+      deferred.reject(dataResponses.login_error);
     });
-  }, function (err) {
-    log('error', data.logData, 'fetchAttendance (Request) KO', err);
-    deferred.reject(dataResponses.login_error);
-  });
+
+  }
 
   return deferred.promise;
 }

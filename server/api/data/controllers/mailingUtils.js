@@ -15,7 +15,7 @@ exports.storeRulesResults   = storeRulesResults;
 function getRules(data){
   var deferred = Q.defer();
 
-  log('info', data.logData, 'mailingUtils getRules accesing' + config.dataTables.mailRules);
+  log('info', data.logData, 'mailingUtils getRules accesing ' + config.dataTables.mailRules);
 
   Utils.performQuery('SELECT * FROM ' + config.dataTables.mailRules + ' WHERE active=1').then(function (response) {
     data.mailRules = response.data;

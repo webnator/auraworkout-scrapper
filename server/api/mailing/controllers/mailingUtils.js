@@ -84,7 +84,6 @@ function updateRule(data){
     }
     query += ' WHERE `id`="' + data.params.ruleId + '"';
 
-    console.log('UPDATE QUERY', query);
     Utils.performQuery(query).then(function () {
       log('info', data.logData, 'mailingUtils updateRule OK');
       resolve(data);

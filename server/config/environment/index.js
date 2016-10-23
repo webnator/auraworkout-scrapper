@@ -18,7 +18,19 @@ var all = {
     password: 'aura90048'
   },
   zingUrl: 'https://reserve.auraworkout.com/admin/index.cfm',
-  zingRegisterUrl: 'https://reserve.auraworkout.com/reserve/index.cfm'
+  zingRegisterUrl: 'https://reserve.auraworkout.com/reserve/index.cfm',
+
+  zingConfigurations: {
+    attendance: {
+      rooms: [1, 3, 4, 5]
+    }
+  },
+
+  dataTables: {
+    mailRules: 'Rules',
+    freeClasses: 'FreeClass',
+    customers: 'Customer'
+  },
 };
 
 

@@ -12,6 +12,7 @@ exports.register = function(server, options, next) {
   require('./api/data')(server);
   require('./api/register')(server);
   require('./api/mailing')(server);
+  require('./api/users')(server);
   /* routesinject */
 
   next();
