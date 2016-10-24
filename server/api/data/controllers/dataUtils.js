@@ -208,8 +208,7 @@ function fetchAttendance(data){
       qs: {
         action: 'Report.attendanceExport',
         export: 'csv',
-        start: '4/1/14',
-        end: '4/1/15',
+        start: '4/1/15',
         roomid: room
       },
       jar: j
