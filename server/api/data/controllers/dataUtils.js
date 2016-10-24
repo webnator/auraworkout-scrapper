@@ -209,6 +209,7 @@ function fetchAttendance(data){
         action: 'Report.attendanceExport',
         export: 'csv',
         start: '4/1/15',
+        end: '1/1/16',
         roomid: room
       },
       jar: j
