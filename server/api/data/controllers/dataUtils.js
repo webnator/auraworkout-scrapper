@@ -208,6 +208,7 @@ function fetchAttendance(data){
       qs: {
         action: 'Report.attendanceExport',
         export: 'csv',
+        start: '4/1/14',
         roomid: room
       },
       jar: j
@@ -215,7 +216,6 @@ function fetchAttendance(data){
 
     Utils.sendRequest(data).then(function (data) {
       var converter = new Converter({});
-      // console.log('RESPONSE', data.reqData.response.statusCode);
       converter.fromString(data.reqData.body, function(err, result){
         if(err) {
           return deferred.reject(err);
@@ -348,12 +348,10 @@ function storeAttendance(data){
   var deferred = Q.defer();
   log('info', data.logData, 'storeAttendance accesing', { totalAttendances: data.output.attendance.length });
 
-  Utils.truncateTable('Attendance').then(function () {
-    Utils.insertMultiple(data.output.attendance, 'Attendance', data).then(function () {
-      deferred.resolve(data);
-    }, function (err) {
-      console.log('ERROR', err);
-    });
+  Utils.insertMultiple(data.output.attendance, 'Attendance', data).then(function () {
+    deferred.resolve(data);
+  }, function (err) {
+    console.log('ERROR', err);
   });
 
   return deferred.promise;
