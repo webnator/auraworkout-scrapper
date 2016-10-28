@@ -13,6 +13,5 @@ module.exports = function(server) {
     },
     handler: userController.redeemCode
   });
-  
 
 };
