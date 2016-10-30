@@ -12,6 +12,7 @@ module.exports = function (data, rule) {
 
   log('info', data.logData, 'Action:createList | Starting');
   rule.logData = data.logData;
+
   createMailingLists(rule)
     .then(addMailsToList)
     .then(function () {

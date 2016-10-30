@@ -35,11 +35,13 @@ function saveFreeClasses(rule) {
     var freeClasses = [];
     for (let i = 0; i < rule.result.length; i++) {
       var person = rule.result[i];
+      console.log('MY EXTRA', extraInfo);
       var freeClass = {
         userEmail: person.emailaddress,
         code: uuid.v4(),
         ruleId: rule.id,
-        classId: extraInfo.class_id
+        classId: extraInfo.class_id,
+        extra: JSON.stringify(extraInfo.confirm_mail)
       };
       rule.result[i].classCode = freeClass.code;
 
@@ -114,7 +116,7 @@ function sendNotificationEmail (rule) {
     message: message,
     async: async
   };
-  console.log('MAILL', JSON.stringify(mailSendRequest));
+
   mandrill_client.messages.sendTemplate(mailSendRequest, function() {
     log('info', rule.logData, 'Action:giveFreeClass - sendNotificationEmail | sendEmail - OK');
     deferred.resolve(rule);

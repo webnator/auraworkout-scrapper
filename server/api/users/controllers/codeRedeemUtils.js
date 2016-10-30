@@ -4,13 +4,14 @@ var userResponses   = require('./../responses/userResponses');
 var Utils           = require('../../../components/utils');
 var log             = Utils.log;
 var config          = require('./../../../config/environment');
+var mandrill        = require('mandrill-api/mandrill');
 var _dataUtils      = require('./../../data/controllers/dataUtils');
 var _registerUtils  = require('./../../register/controllers/registerUtils');
 
 
 
 class CodeRedeemService {
-  static retrieveClassCode (data) {
+  static retrieveClassCode(data) {
     return new Promise(function(resolve, reject) {
       log('info', data.logData, 'CodeRedeemService retrieveClassCode | Accesing');
 
@@ -39,7 +40,7 @@ class CodeRedeemService {
     });
   }
 
-  static getUser (data) {
+  static getUser(data) {
     return new Promise(function (resolve, reject) {
       log('info', data.logData, 'CodeRedeemService getUser | Accesing');
 
@@ -64,7 +65,7 @@ class CodeRedeemService {
     });
   }
 
-  static setFreeClass (data) {
+  static setFreeClass(data) {
     return new Promise(function(resolve, reject) {
       log('info', data.logData, 'CodeRedeemService setFreeClass | Accesing');
 
@@ -91,7 +92,7 @@ class CodeRedeemService {
     });
 
   }
-  static setClassAsClaimed (data) {
+  static setClassAsClaimed(data) {
     return new Promise(function(resolve, reject) {
       log('info', data.logData, 'CodeRedeemService setClassAsClaimed | Accesing');
 
@@ -105,6 +106,49 @@ class CodeRedeemService {
       }).catch((err) => {
         log('error', data.logData, 'CodeRedeemService setClassAsClaimed | KO - Error', err);
         return reject(err);
+      });
+    });
+  }
+
+  static sendConfirmationEmail(data) {
+    return new Promise(function(resolve, reject) {
+      log('info', data.logData, 'CodeRedeemService sendConfirmationEmail | Accesing');
+
+      var extraInfo = JSON.parse(data.freeClass.extra);
+      var mandrill_client = new mandrill.Mandrill(config.mandrill.apiKey);
+
+      var message = {
+        subject: extraInfo.subject,
+        from_email: extraInfo.from_email,
+        from_name: extraInfo.from_name,
+        to: [{
+          email: data.user.emailaddress,
+          type: 'to'
+        }],
+        headers: {
+          'Reply-To': extraInfo.from_email
+        },
+        track_opens: true,
+        track_clicks: true,
+        merge: true,
+        merge_language: 'handlebars',
+        global_merge_vars: [],
+        tags: [],
+        merge_vars: [],
+      };
+      var async = false;
+      var mailSendRequest = {
+        template_name: extraInfo.template_name,
+        template_content: [],
+        message: message,
+        async: async
+      };
+      mandrill_client.messages.sendTemplate(mailSendRequest, function() {
+        log('info', data.logData, 'CodeRedeemService sendConfirmationEmail | sendEmail - OK');
+        return resolve(data);
+      }, function(e) {
+        log('error', data.logData, 'CodeRedeemService sendConfirmationEmail | sendEmail - KO ' + e.name + ' - ' + e.message);
+        return resolve(data);
       });
     });
   }

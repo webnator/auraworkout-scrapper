@@ -27,6 +27,7 @@ class UserController {
       .then(_codeRedeemUtils.getUser)
       .then(_codeRedeemUtils.setFreeClass)
       .then(_codeRedeemUtils.setClassAsClaimed)
+      .then(_codeRedeemUtils.sendConfirmationEmail)
       .then(function(data){
         response = Utils.createResponseData(userResponses.code_redeemed_ok);
         log('info', data.logData, 'UserController getRegister | OK response', response);
